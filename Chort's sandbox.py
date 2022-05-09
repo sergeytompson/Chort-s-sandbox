@@ -1,5 +1,8 @@
 from random import choice, randint
+
 from termcolor import cprint
+
+from random_names import get_name
 
 
 class Chort:
@@ -35,7 +38,7 @@ class Chort:
 
 if __name__ == '__main__':
     n = randint(10, 100)
-    chorts_sandbox = [Chort(name='Чорт'+str(i), money=randint(20, 30)) for i in range(1, n + 1)]
+    chorts_sandbox = [Chort(name=get_name(), money=randint(20, 30)) for i in range(1, n + 1)]
     moves = 0
 
     while len(chorts_sandbox) > 1:
@@ -55,7 +58,7 @@ if __name__ == '__main__':
     chort_winner = chorts_sandbox[0]
     cprint(f'Победил - {chort_winner.name}', color='blue')
     cprint(f'Нахастленные им деньги - {chort_winner.all_hastle_money}, у него денег нахастлили - '
-          f'{chort_winner.lost_money}', color='green')
+           f'{chort_winner.lost_money}', color='green')
     cprint(f'Хастлил раз - {chort_winner.hastle_other_chort}, его хастлили раз - {chort_winner.was_hastle}',
            color='green')
     cprint(f'Всего сделано ходов - {moves}', color='yellow')
