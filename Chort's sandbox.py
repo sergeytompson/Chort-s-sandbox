@@ -1,7 +1,10 @@
+# -*- coding:  UTF-8  -*-
+
+from json import JSONDecodeError
 from random import choice, randint
-
+from threading import Thread
+from queue import Queue
 from termcolor import cprint
-
 from random_names import get_name
 
 
@@ -36,9 +39,33 @@ class Chort:
         cprint(f'{self.name} слился', color='red')
 
 
+class CreateChort(Thread):
+
+    def __init__(self, pipe, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.queue = pipe
+
+    def run(self):
+        chertila = None
+        try:
+            chertila = Chort(name=get_name(), money=randint(20, 30))
+        except JSONDecodeError:
+            print('Все пошло по пизде')
+        self.queue.put(chertila)
+
+
 if __name__ == '__main__':
     n = randint(10, 100)
-    chorts_sandbox = [Chort(name=get_name(), money=randint(20, 30)) for i in range(1, n + 1)]
+    queue = Queue()
+    chorts_creator = [CreateChort(queue) for _ in range(n)]
+    chorts_sandbox = []
+    for chort in chorts_creator:
+        chort.start()
+    for chort in chorts_creator:
+        chort.join()
+    while not queue.empty():
+        chorts_sandbox.append(queue.get)
+
     moves = 0
 
     while len(chorts_sandbox) > 1:
