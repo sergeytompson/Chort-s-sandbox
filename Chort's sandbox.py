@@ -46,12 +46,11 @@ class CreateChort(Thread):
         self.queue = pipe
 
     def run(self):
-        chertila = None
         try:
             chertila = Chort(name=get_name(), money=randint(20, 30))
+            self.queue.put(chertila)
         except JSONDecodeError:
             print('Все пошло по пизде')
-        self.queue.put(chertila)
 
 
 if __name__ == '__main__':
@@ -64,7 +63,7 @@ if __name__ == '__main__':
     for chort in chorts_creator:
         chort.join()
     while not queue.empty():
-        chorts_sandbox.append(queue.get)
+        chorts_sandbox.append(queue.get())
 
     moves = 0
 

@@ -1,5 +1,8 @@
 import logging
+
 import requests
+
+from requests.adapters import HTTPAdapter, Retry
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,7 +32,10 @@ def get_names(count: int = 50) -> str:
 
 
 def get_name() -> str:
-    result = requests.get(URL).json()
+    session = requests.Session()
+    retries = Retry(total=10, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    result = session.get(URL, timeout=5).json()
     data = result.get('results')
     name_data = get_name_data(data)
     name = f'{get_first_name(name_data)} {get_last_name(name_data)}'
